@@ -20,7 +20,7 @@ from django.views.static import serve
 
 
 try:
-    from django.conf.urls import include, url
+    from django.conf.urls import include
 
     # Compatibility for Django > 1.8
     def patterns(prefix, *args):
@@ -37,7 +37,7 @@ except ImportError:  # Django < 1.4
     if VERSION < (1, 4):
         from django.conf.urls.defaults import include, patterns, url
     elif VERSION < (4, 0):
-        from django.urls import include, url
+        from django.urls import path, re_path, include, url
     else:
         from django.urls import re_path as url
 
@@ -49,16 +49,16 @@ js_info_dict = {
 if VERSION < (1, 11):
     urlpatterns = patterns(
         '',
-        url(r'^', include('app.urls')),
+        path('', include('app.urls')),
     )
     urlpatterns += patterns(
         '',
-        url(r'^%s(?P<path>.*)$' % settings.MEDIA_URL[1:]),
+        re_path(r'^%s(?P<path>.*)$' % settings.MEDIA_URL[1:]),
     )
 else:
     urlpatterns = [
-        url(r'^', include('app.urls')),
-        url(
+        path('', include('app.urls')),
+        re_path(
             r'^%s(?P<path>.*)$' % settings.MEDIA_URL[1:],
             serve,
             {
